@@ -350,13 +350,18 @@ function applyVariant(variant, matches, context) {
         // .sm:container {} is a variant of the container component
         clone.nodes[0].raws.tailwind = { ...clone.nodes[0].raws.tailwind, parentLayer: meta.layer }
 
+        const variantOptions = context.variantOptions.get(variant)
         let withOffset = [
           {
             ...meta,
+            options: {
+              ...meta.options,
+              ...variantOptions,
+            },
             sort: context.offsets.applyVariantOffset(
               meta.sort,
               variantSort,
-              Object.assign(args, context.variantOptions.get(variant))
+              Object.assign(args, variantOptions)
             ),
             collectedFormats: (meta.collectedFormats ?? []).concat(collectedFormats),
           },

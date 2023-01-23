@@ -1213,4 +1213,34 @@ crosscheck(({ stable, oxide }) => {
       }
     `)
   })
+
+  test('variants ignore the important selector when respectImportant is false', () => {
+    let config = {
+      important: 'html body .tw',
+      content: [
+        {
+          raw: html`
+            <div class="is-frame">
+              <div class="tw">
+                <a class="iframe:opacity-75">Look, it's a link!</a>
+              </div>
+            </div>
+          `,
+        },
+      ],
+      plugins: [
+        function ({ addVariant }) {
+          addVariant('iframe', '.is-frame &', { respectImportant: false })
+        },
+      ],
+    }
+
+    return run('@tailwind utilities', config).then((result) => {
+      return expect(result.css).toMatchFormattedCss(css`
+        .iframe .iframe\:opacity-75 {
+          opacity: 0.75;
+        }
+      `)
+    })
+  })
 })
